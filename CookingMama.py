@@ -2,7 +2,7 @@
 """
 Created on Thu Sep 14 14:14:59 2023
 
-@author: Sam et Jeanne
+@authors: Sam et Jeanne
 """
 
 def get_user_preferences():
