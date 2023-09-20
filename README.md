@@ -1,6 +1,11 @@
 # Cookingmama
 
-## Projet est que la personne choisit ce qu'elle veut manger
-### Premier choix : Plat / dessert 
-### Deuxième choix : viande / poisson / végé 
-### Puis sélection au hasard ? 
+## Projet de choix de recettes selon préférences
+
+### Choix : viande / poisson / végé 
+### Maybe 2ème choix ?
+### Résultat
+### Ok ou non ?
+### Si ok, liste d'ingrédients 
+### Si pas ok, nouveau choix 
+
