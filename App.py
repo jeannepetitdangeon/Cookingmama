@@ -16,11 +16,11 @@ class App:
         self.root.geometry('400x500')
         self.frame = None
 
-    def clear_frame(self):
-        # print('init')
-        for widgets in self.frame.winfo_children():
-            print('for')
-            widgets.destroy()
+    # def clear_frame(self):
+    #     # print('init')
+    #     for widgets in self.frame.winfo_children():
+    #         # print('for')
+    #         widgets.destroy()
 
     # launches the app
     def launch(self):
@@ -44,7 +44,8 @@ class App:
         i=0
 
         def show_random_meal():
-            self.clear_frame()
+            # doesn't work
+            # self.clear_frame()
             data.get_random_subcategory()
         
         for category in data.valid_main_categories:
