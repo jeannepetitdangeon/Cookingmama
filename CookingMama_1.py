@@ -118,12 +118,8 @@ else:
 #______________________________________________________________________________
 
 
-## 
 
-from bs4 import BeautifulSoup
-import requests
-
-
+# Step 4: Recover the ingredients
 
 url_ingredients = 'https://www.marmiton.org/recettes/recette_poulet-au-four-version-light_218020.aspx'
 
@@ -134,7 +130,6 @@ span_element_1 = soup_ingredients.find_all('span', class_='RCP__sc-8cqrvd-3')
 
 
 span_element_1_as_string = str(span_element_1)
-
 
 
 # Parse the HTML code
