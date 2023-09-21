@@ -1,8 +1,15 @@
+import os
+import ttkthemes
+
+exec(open('C:/Users/epcmic/OneDrive/Documents/GitHub/Cookingmama/CookingMama_1.py', encoding='utf-8').read())
+exec(open('C:/Users/epcmic/OneDrive/Documents/GitHub/Cookingmama/Choice_button.py', encoding='utf-8').read())
+
+
 from tkinter import *
 from tkinter import ttk
 from ttkthemes import ThemedTk
-from CookingMama_1 import Data
-from Choice_button import Choice_button
+# from CookingMama_1.py import *
+#from Choice_button import Choice_button
 from bs4 import BeautifulSoup
 import requests
 import random
