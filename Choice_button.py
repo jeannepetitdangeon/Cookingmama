@@ -4,8 +4,10 @@ from ttkthemes import ThemedTk
 import requests
 from bs4 import BeautifulSoup
 
+# choice button blueprint
 class Choice_button:
-    def __init__(self, text, choice, data, callback_random_method):
+    def __init__(self, display_frame, text, choice, data, callback_random_method):
+        # method called on clicking in a meal category
         def callback_method():
             print(self.choice)
 
@@ -25,6 +27,7 @@ class Choice_button:
 
                     data.set_subcategories(subcategories)
 
+                    # random choice method given in argument (dirty)
                     callback_random_method()
 
                 else:
@@ -32,5 +35,6 @@ class Choice_button:
             else:
                 print('Failed to retrieve the main category page. Status code:', main_category_response.status_code)
 
-        self.button = ttk.Button(text=text, command=callback_method)
+        # button instanciation
+        self.button = ttk.Button(display_frame, text=text, command=callback_method)
         self.choice = choice
