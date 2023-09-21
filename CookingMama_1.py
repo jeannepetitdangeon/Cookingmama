@@ -2,12 +2,14 @@
 """
 Created on Tue Sep 19 18:09:05 2023
 
-@author: samue
+@author: samuel
 """
 
 # Import necessary libraries
 
-import bs4
+pip install bs4
+pip install requests
+
 from bs4 import BeautifulSoup
 import requests
 import random
@@ -110,5 +112,37 @@ if subcategories:
     # You can use 'random_subcategory' for further processing, like scraping recipes from this subcategory.
 else:
     print("No subcategories found to select from.")
+    
+    
+#______________________________________________________________________________
+#______________________________________________________________________________
 
+
+## 
+
+from bs4 import BeautifulSoup
+import requests
+
+
+
+url_ingredients = 'https://www.marmiton.org/recettes/recette_poulet-au-four-version-light_218020.aspx'
+
+response_ingredients = requests.get(url_ingredients)
+
+soup_ingredients = BeautifulSoup(response_ingredients.text, 'html.parser')
+span_element_1 = soup_ingredients.find_all('span', class_='RCP__sc-8cqrvd-3')
+
+
+span_element_1_as_string = str(span_element_1)
+
+
+
+# Parse the HTML code
+soup = BeautifulSoup(span_element_1_as_string, 'html.parser')
+
+# Find all <span> elements with the specified classes and extract their text
+text_parts = [span.text for span in soup.find_all('span', class_=["RCP__sc-8cqrvd-3 itCXhd", "RCP__sc-8cqrvd-3 cDbUWZ"])]
+
+# Print the list of extracted text parts
+print(text_parts)
 
