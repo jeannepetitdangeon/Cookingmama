@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Sep 21 12:43:30 2023
-
-@author: samuel
-"""
-
 # Import necessary libraries
 
 from bs4 import BeautifulSoup
