@@ -17,49 +17,68 @@ import random
 class App:
     # initializes the theme and app window 
     def __init__(self):
-        self.root = ThemedTk(theme='Adapta')
-        self.root.geometry('400x500')
-        self.frame = None
+        self.data = None
+        # window instanciation
+        self.window = ThemedTk(theme='Adapta')
+        self.window.geometry('400x500')
 
-    # def clear_frame(self):
-    #     # print('init')
-    #     for widgets in self.frame.winfo_children():
-    #         # print('for')
-    #         widgets.destroy()
+        # frames instanciation
+        self.actual_frame = None
+        self.start_frame = Frame(self.window)
+        self.meal_display_frame = Frame(self.window)
+        
+        # start frame creation
+        category_choice_text = Label(self.start_frame, text="Choisissez une catégorie :", height=500, anchor="n")
+        category_choice_text.pack()
 
     # launches the app
     def launch(self):
-        self.show_start()
+        self.show_start_frame()
         # this function runs the app
-        self.root.mainloop()
+        self.window.mainloop()
 
     # first menu display
-    def show_start(self):
-        self.frame = Frame(self.root)
-        self.frame.pack(expand=False)
+    def show_start_frame(self):
+        self.set_frame(self.start_frame)
 
-        category_choice_text = Text(self.frame, fg="black", padx=70, pady=30)
-        category_choice_text.insert(1.0, "Choisissez une catégorie :")
-        category_choice_text.config(font=("arial", 16), state=DISABLED)
-        category_choice_text.pack()
+        # data storage instaciation
+        self.data = Data()
 
-        data = Data()
-
+        # btn coordinates
         y=0.2
+        # btn index for their placement
         i=0
 
         def show_random_meal():
-            # doesn't work
-            # self.clear_frame()
-            data.get_random_subcategory()
+            self.actual_frame.pack_forget()
+            self.data.set_random_subcategory()
+            self.show_meal_display()
         
-        for category in data.valid_main_categories:
+        for category in self.data.valid_main_categories:
+            # formats the category name to delete the "-" and capitalize the first letter
             formatted_name = category.replace('-', ' ')
             formatted_name = formatted_name.capitalize()
 
-            category_button = Choice_button(formatted_name, category, data, show_random_meal)
+            category_button = Choice_button(self.start_frame, formatted_name, category, self.data, show_random_meal)
             category_button.button.place(relx=0.5, rely=y + i, anchor=CENTER)
             i = i + 0.1
+
+    def show_meal_display(self):
+        self.set_frame(self.meal_display_frame)
+        print(self.data.random_subcategory)
+
+        # meal title and name creation
+        meal_display_title = Label(text = "Voici votre plat au hasard :", height=1)
+        meal_name = Label(text = self.data.random_subcategory, height=1)
+        # pic = PhotoImage()
+
+        meal_display_title.pack()
+        meal_name.pack()
+
+    # changes the actual frame with the given one
+    def set_frame(self, frame):
+        self.actual_frame = frame
+        self.actual_frame.pack(expand=False)
 
 class Data:
     def __init__(self):
@@ -69,9 +88,8 @@ class Data:
     def set_subcategories(self, new_subcategories):
         self.subcategories = new_subcategories
 
-    def get_random_subcategory(self):
-        random_subcategory = random.choice(self.subcategories)
-        print("choice: " + random_subcategory)
+    def set_random_subcategory(self):
+        self.random_subcategory = random.choice(self.subcategories)
 
 app = App()
 app.launch()
