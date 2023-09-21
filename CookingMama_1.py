@@ -7,9 +7,7 @@ Created on Tue Sep 19 18:09:05 2023
 
 # Import necessary libraries
 
-pip install bs4
-pip install requests
-
+import bs4
 from bs4 import BeautifulSoup
 import requests
 import random
