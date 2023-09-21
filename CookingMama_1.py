@@ -1,53 +1,17 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Sep 19 18:09:05 2023
-
-@author: samuel
-"""
-
-# Import necessary libraries
-
-pip install bs4
-pip install requests
-
 from bs4 import BeautifulSoup
 import requests
 import random
 
-# Define the URL of the website you want to scrape
-url = 'https://www.marmiton.org/recettes/index/categorie/plat-principal/'
-
-# Send an HTTP GET request to the URL
-response = requests.get(url)
-
-# Check if the request was successful (status code 200)
-if response.status_code == 200:
-    # Parse the HTML content of the page using BeautifulSoup
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    # Find the element with class "mrtn-tags-list"
-    liste_preferences = soup.find(class_='mrtn-tags-list')
-
-    # Check if the element was found
-    if liste_preferences:
-        # Extract the text from the element and split it into a list
-        texte_liste_preferences = [title.text.strip() for title in liste_preferences.find_all('li')]
-
-        # Print the list of preferences
-        print(texte_liste_preferences)
-    else:
-        print('Element with class "mrtn-tags-list" not found on the page.')
-else:
-    print('Failed to retrieve the web page. Status code:', response.status_code)
-    
-
-# User Input
-# Get the user's preferred main category (e.g., 'viande', 'poisson').
+## STEP 1 : Get User's Input
 
 # Define a list of valid main categories
-valid_main_categories = ['viande', 'poisson', 'fruits-de-mer', 'plat-unique', 'œufs', 'plat-vegetarien', 'pates-riz-semoule', 'plats-au-fromage']
+valid_main_categories = ['viande', 'poisson', 'fruits-de-mer', 'plat-vegetarien']
 
-# Prompt the user for input and ensure it is a valid main category
+# Prompt the user to choose a preferred main category
+print("Available main categories:")
+for category in valid_main_categories:
+    print("- " + category)
+
 while True:
     user_input = input("Please enter your preferred main category: ").lower()
     
@@ -55,89 +19,62 @@ while True:
         # User input is valid, break the loop
         break
     else:
-        print("Invalid category. Please choose from the following options:")
-        print(valid_main_categories)
+        print("Invalid category. Please choose from the available options.")
 
 # Now, 'user_input' contains the user's preferred main category
 print("You selected:", user_input)
 
+## STEP 2 : Recover recipe data from selected food preferences
 
-# Step 2: Scrape Subcategories
-# Based on the user's choice, scrape the list of subcategories within the selected main category.
-
-
-# Send an HTTP GET request to the main category page
-main_category_response = requests.get(f'https://www.marmiton.org/recettes/index/categorie/{user_input}/')
-
-# Check if the request was successful (status code 200)
-if main_category_response.status_code == 200:
-    # Parse the HTML content of the main category page using BeautifulSoup
-    main_category_soup = BeautifulSoup(main_category_response.text, 'html.parser')
-
-    # Find the <div class="recipe-results fix-inline-block"> element
-    recipe_results_div = main_category_soup.find('div', class_='recipe-results fix-inline-block')
-
-    if recipe_results_div:
-        # Find all <div class="recipe-card"> elements within the recipe_results_div
-        subcategory_elements = recipe_results_div.find_all('div', class_='recipe-card')
-
-        # Extract the subcategory names from each subcategory element
-        subcategories = []
-
-        for subcategory_element in subcategory_elements:
-            # Extract the subcategory name from the <h4> tag
-            subcategory_name = subcategory_element.find('h4', class_='recipe-card__title').text.strip()
-            subcategories.append(subcategory_name)
-
-        # Now 'subcategories' contains the list of subcategory names within the selected main category
-        print("Subcategories within the selected main category:")
-        for subcategory in subcategories:
-            print(subcategory)
+# Define a function to scrape a random recipe from the chosen category
+def scrape_random_recipe(category):
+    url = f"https://www.marmiton.org/recettes/index/categorie/{category}/"
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, "html.parser")
+        recipe_links = soup.find_all("a", class_="recipe-card-link")
+        if not recipe_links:
+            print("No recipes found for this category.")
+            return None
+        selected_url = random.choice([link["href"] for link in recipe_links])
+        return selected_url
     else:
-        print('No recipe results found on the page.')
-else:
-    print('Failed to retrieve the main category page. Status code:', main_category_response.status_code)
+        print("Failed to retrieve the web page.")
+        return None
 
+# Initialize a flag to control the loop
+recipe_found = False
 
-# Step 3: Random Meal Selection
-# Randomly select a subcategory (meal) from the list obtained in Step 2.
+# Continue the loop until a suitable recipe is found
+while not recipe_found:
+    # Scrape and display a random recipe URL
+    initial_recipe_url = scrape_random_recipe(user_input)
+    if initial_recipe_url:
+        print("Randomly Selected Recipe URL:", initial_recipe_url)
+        
+        # Ask if the recipe is suitable
+        suitability = input("Is this recipe suitable for you? (yes/no): ").strip().lower()
+        
+        if suitability == "yes":
+            # Set the flag to end the loop
+            recipe_found = True
+        else:
+            # Continue the loop to find a new random recipe
+            print("Fetching a new random recipe URL...")
 
-if subcategories:
-    # Use random.choice() to select a random subcategory from the list
-    random_subcategory = random.choice(subcategories)
+## STEP 3 : Fetch and display the list of ingredients for the selected recipe if the user is satisfied
 
-    # Print the randomly selected subcategory
-    print("Randomly selected subcategory (meal):", random_subcategory)
+if recipe_found:
+    # Fetch and display the list of ingredients for the selected recipe
+    print("Fetching ingredients...")
+    response_ingredients = requests.get(initial_recipe_url)
+    soup_ingredients = BeautifulSoup(response_ingredients.text, 'html.parser')
+    span_element_1 = soup_ingredients.find_all('span', class_='RCP__sc-8cqrvd-3')
+    span_element_1_as_string = str(span_element_1)
+    soup = BeautifulSoup(span_element_1_as_string, 'html.parser')
+    text_parts = [span.text for span in soup.find_all('span', class_=["RCP__sc-8cqrvd-3 itCXhd", "RCP__sc-8cqrvd-3 cDbUWZ"])]
 
-    # You can use 'random_subcategory' for further processing, like scraping recipes from this subcategory.
-else:
-    print("No subcategories found to select from.")
-    
-    
-#______________________________________________________________________________
-#______________________________________________________________________________
-
-
-
-# Step 4: Recover the ingredients
-
-url_ingredients = 'https://www.marmiton.org/recettes/recette_poulet-au-four-version-light_218020.aspx'
-
-response_ingredients = requests.get(url_ingredients)
-
-soup_ingredients = BeautifulSoup(response_ingredients.text, 'html.parser')
-span_element_1 = soup_ingredients.find_all('span', class_='RCP__sc-8cqrvd-3')
-
-
-span_element_1_as_string = str(span_element_1)
-
-
-# Parse the HTML code
-soup = BeautifulSoup(span_element_1_as_string, 'html.parser')
-
-# Find all <span> elements with the specified classes and extract their text
-text_parts = [span.text for span in soup.find_all('span', class_=["RCP__sc-8cqrvd-3 itCXhd", "RCP__sc-8cqrvd-3 cDbUWZ"])]
-
-# Print the list of extracted text parts
-print(text_parts)
-
+    # Print the list of extracted text parts (ingredients)
+    print("Ingredients:")
+    for ingredient in text_parts:
+        print("- " + ingredient)
