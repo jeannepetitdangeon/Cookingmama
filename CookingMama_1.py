@@ -36,8 +36,18 @@ def scrape_random_recipe(category):
         if not recipe_links:
             print("No recipes found for this category.")
             return None
-        selected_url = random.choice([link["href"] for link in recipe_links])
-        return selected_url
+        selected_link = random.choice(recipe_links)
+        selected_name_element = selected_link.find("span", class_="recipe-card__title")
+        if selected_name_element:
+            selected_name = selected_name_element.text.strip()
+        else:
+            selected_name = "Recipe name not found"
+        selected_image_element = selected_link.find("img", class_="recipe-card__picture")
+        if selected_image_element and "src" in selected_image_element.attrs:
+            selected_image = selected_image_element["src"]
+        else:
+            selected_image = "Image not found"
+        return selected_name, selected_image, selected_link["href"]
     else:
         print("Failed to retrieve the web page.")
         return None
@@ -48,9 +58,13 @@ recipe_found = False
 # Continue the loop until a suitable recipe is found
 while not recipe_found:
     # Scrape and display a random recipe URL
-    initial_recipe_url = scrape_random_recipe(user_input)
-    if initial_recipe_url:
-        print("Randomly Selected Recipe URL:", initial_recipe_url)
+    initial_recipe_data = scrape_random_recipe(user_input)
+    if initial_recipe_data:
+        selected_name, selected_image, initial_recipe_url = initial_recipe_data
+        print("Randomly Selected Recipe:")
+        print("Name:", selected_name)
+        print("Image URL:", selected_image)
+        print("Recipe URL:", initial_recipe_url)
         
         # Ask if the recipe is suitable
         suitability = input("Is this recipe suitable for you? (yes/no): ").strip().lower()
