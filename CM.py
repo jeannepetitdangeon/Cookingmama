@@ -5,9 +5,13 @@ import random
 ## STEP 1 : Get User's Input
 
 # Define a list of valid main categories
-valid_main_categories = ['viande', 'poisson', 'fruits-de-mer', 'plat-unique', 'œufs', 'plat-vegetarien', 'pates-riz-semoule', 'plats-au-fromage']
+valid_main_categories = ['viande', 'poisson', 'fruits-de-mer', 'plat-vegetarien']
 
-# Prompt the user for input and ensure it is a valid main category
+# Prompt the user to choose a preferred main category
+print("Available main categories:")
+for category in valid_main_categories:
+    print("- " + category)
+
 while True:
     user_input = input("Please enter your preferred main category: ").lower()
     
@@ -15,8 +19,7 @@ while True:
         # User input is valid, break the loop
         break
     else:
-        print("Invalid category. Please choose from the following options:")
-        print(valid_main_categories)
+        print("Invalid category. Please choose from the available options.")
 
 # Now, 'user_input' contains the user's preferred main category
 print("You selected:", user_input)
@@ -53,22 +56,25 @@ while not recipe_found:
         suitability = input("Is this recipe suitable for you? (yes/no): ").strip().lower()
         
         if suitability == "yes":
-            # Fetch and display the list of ingredients for the selected recipe
-            print("Fetching ingredients...")
-            response_ingredients = requests.get(initial_recipe_url)
-            soup_ingredients = BeautifulSoup(response_ingredients.text, 'html.parser')
-            span_element_1 = soup_ingredients.find_all('span', class_='RCP__sc-8cqrvd-3')
-            span_element_1_as_string = str(span_element_1)
-            soup = BeautifulSoup(span_element_1_as_string, 'html.parser')
-            text_parts = [span.text for span in soup.find_all('span', class_=["RCP__sc-8cqrvd-3 itCXhd", "RCP__sc-8cqrvd-3 cDbUWZ"])]
-            
-            # Print the list of extracted text parts (ingredients)
-            print("Ingredients:")
-            for ingredient in text_parts:
-                print("- " + ingredient)
-            
             # Set the flag to end the loop
             recipe_found = True
         else:
             # Continue the loop to find a new random recipe
             print("Fetching a new random recipe URL...")
+
+## STEP 3 : Fetch and display the list of ingredients for the selected recipe if the user is satisfied
+
+if recipe_found:
+    # Fetch and display the list of ingredients for the selected recipe
+    print("Fetching ingredients...")
+    response_ingredients = requests.get(initial_recipe_url)
+    soup_ingredients = BeautifulSoup(response_ingredients.text, 'html.parser')
+    span_element_1 = soup_ingredients.find_all('span', class_='RCP__sc-8cqrvd-3')
+    span_element_1_as_string = str(span_element_1)
+    soup = BeautifulSoup(span_element_1_as_string, 'html.parser')
+    text_parts = [span.text for span in soup.find_all('span', class_=["RCP__sc-8cqrvd-3 itCXhd", "RCP__sc-8cqrvd-3 cDbUWZ"])]
+
+    # Print the list of extracted text parts (ingredients)
+    print("Ingredients:")
+    for ingredient in text_parts:
+        print("- " + ingredient)
