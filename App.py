@@ -7,8 +7,6 @@ from bs4 import BeautifulSoup
 import requests
 import random
 
-# pip install ttkthemes
-
 class App:
     # initializes the theme and app window 
     def __init__(self):
