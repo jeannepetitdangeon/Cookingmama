@@ -50,10 +50,14 @@ class App:
         i=0
 
         def show_random_meal():
+            # hides the specified frame
             self.actual_frame.pack_forget()
+            # takes a random meal
             self.data.set_random_subcategory()
+            #changes the actual frame
             self.show_meal_display()
         
+        # for loop that generates the different buttons from different categories
         for category in self.data.valid_main_categories:
             # formats the category name to delete the "-" and capitalize the first letter
             formatted_name = category.replace('-', ' ')
@@ -70,6 +74,7 @@ class App:
         # meal title and name creation
         meal_display_title = Label(text = "Voici votre plat au hasard :", height=1)
         meal_name = Label(text = self.data.random_subcategory, height=1)
+        # ce qui va afficher l'image de la recette
         # pic = PhotoImage()
 
         meal_display_title.pack()
@@ -80,6 +85,7 @@ class App:
         self.actual_frame = frame
         self.actual_frame.pack(expand=False)
 
+# hard stores every data you generate
 class Data:
     def __init__(self):
         self.valid_main_categories = ['viande', 'poisson', 'fruits-de-mer', 'plat-unique', 'œufs', 'plat-vegetarien', 'pates-riz-semoule', 'plats-au-fromage']
