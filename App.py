@@ -86,7 +86,7 @@ class App:
 # hard stores every data you generate
 class Data:
     def __init__(self):
-        self.valid_main_categories = ['viande', 'poisson', 'fruits-de-mer', 'plat-unique', 'œufs', 'plat-vegetarien', 'pates-riz-semoule', 'plats-au-fromage']
+        self.valid_main_categories = ['viande', 'poisson', 'fruits-de-mer', 'plat-vegetarien']
         self.subcategories = []
 
     def set_subcategories(self, new_subcategories):
