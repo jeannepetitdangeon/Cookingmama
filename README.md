@@ -14,7 +14,7 @@
 
 Le projet *Cookingmama* a pour objectif d'aider ceux qui ne savent pas quoi manger ou comment faire leur liste de course.
 
-Il suffit d'indiquer au programme vos préférences alimentaires parmi une liste précise (viande / poisson / fruits de mer / plat végétarien, puis le programme sélectionne un repas au hasard dans cette catégorie. Si le plat vous convient, le programme vous indique la liste des ingrédients. Dans le cas contraire, il sélectionne à nouveau un autre plat. 
+Il suffit d'indiquer au programme vos préférences alimentaires parmi une liste précise (viande / poisson / fruits de mer / plat végétarien), puis le programme sélectionne un repas au hasard dans cette catégorie. Si le plat vous convient, le programme vous indique la liste des ingrédients. Dans le cas contraire, il sélectionne à nouveau un autre plat. 
 
 Vous pourrez finalement, dans un temps reduit, faire un choix de repas et une liste de courses.
 
