@@ -1,9 +1,7 @@
 import os
 import ttkthemes
 
-exec(open('C:/Users/epcmic/OneDrive/Documents/GitHub/Cookingmama/CookingMama_1.py', encoding='utf-8').read())
 exec(open('C:/Users/epcmic/OneDrive/Documents/GitHub/Cookingmama/Choice_button.py', encoding='utf-8').read())
-
 
 from tkinter import *
 from tkinter import ttk
