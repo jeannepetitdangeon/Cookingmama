@@ -1,10 +1,50 @@
+"""
+Created on Thu Sep 21 12:43:30 2023
+
+@authors: samuel + jeanne
+"""
+
+# Import necessary libraries
+
 from bs4 import BeautifulSoup
 import requests
 import random
+import re
 
-## STEP 1 : Get User's Input
 
-# Define a list of valid main categories
+## STEP 1 : Scrap the main food categories from the main url
+
+
+# Define the URL of the website you want to scrape
+url_mainpage = 'https://www.marmiton.org/recettes/index/categorie/plat-principal/'
+
+# Send an HTTP GET request to the URL
+response = requests.get(url_mainpage)
+
+# Check if the request was successful (status code 200)
+if response.status_code == 200:
+    # Parse the HTML content of the page using BeautifulSoup
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # Find the element with class "mrtn-tags-list"
+    liste_preferences = soup.find(class_='mrtn-tags-list')
+
+    # Check if the element was found
+    if liste_preferences:
+        # Extract the text from the element and split it into a list
+        texte_liste_preferences = [title.text.strip() for title in liste_preferences.find_all('li')]
+
+        # Print the list of preferences
+        print(texte_liste_preferences)
+    else:
+        print('Element with class "mrtn-tags-list" not found on the page.')
+else:
+    print('Failed to retrieve the web page. Status code:', response.status_code)
+
+
+## STEP 2 : Get user's preferred main category (e.g., 'viande', 'poisson').
+
+
 valid_main_categories = ['viande', 'poisson', 'fruits-de-mer', 'plat-vegetarien']
 
 # Prompt the user to choose a preferred main category
@@ -24,71 +64,76 @@ while True:
 # Now, 'user_input' contains the user's preferred main category
 print("You selected:", user_input)
 
-## STEP 2 : Recover recipe data from selected food preferences
 
-# Define a function to scrape a random recipe from the chosen category
-def scrape_random_recipe(category):
-    url = f"https://www.marmiton.org/recettes/index/categorie/{category}/"
+## STEP 3 : Loop over the recovered recipe urls from selected food preferences
+##          and select one at random until the user is satisfied, and then provide 
+##          the list of ingredients
+
+
+
+while True:
+    # Define the URL to scrape
+    url = f"https://www.marmiton.org/recettes/index/categorie/{user_input}/"
+
+    # Send an HTTP GET request to the URL
     response = requests.get(url)
+
+    # Check if the request was successful (status code 200)
     if response.status_code == 200:
+        # Parse the HTML content of the page
         soup = BeautifulSoup(response.content, "html.parser")
+        
+        # Find all the recipe card links
         recipe_links = soup.find_all("a", class_="recipe-card-link")
-        if not recipe_links:
-            print("No recipes found for this category.")
-            return None
-        selected_link = random.choice(recipe_links)
-        selected_name_element = selected_link.find("span", class_="recipe-card__title")
-        if selected_name_element:
-            selected_name = selected_name_element.text.strip()
-        else:
-            selected_name = "Recipe name not found"
-        selected_image_element = selected_link.find("img", class_="recipe-card__picture")
-        if selected_image_element and "src" in selected_image_element.attrs:
-            selected_image = selected_image_element["src"]
-        else:
-            selected_image = "Image not found"
-        return selected_name, selected_image, selected_link["href"]
+        
+        # Extract the URLs from the links
+        recipe_urls = [link["href"] for link in recipe_links]
+        
+        # Randomly select a URL
+        selected_url = random.choice(recipe_urls)
+        
+        # Print the randomly selected URL
+        print("Randomly Selected URL:", selected_url)
     else:
         print("Failed to retrieve the web page.")
-        return None
-
-# Initialize a flag to control the loop
-recipe_found = False
-
-# Continue the loop until a suitable recipe is found
-while not recipe_found:
-    # Scrape and display a random recipe URL
-    initial_recipe_data = scrape_random_recipe(user_input)
-    if initial_recipe_data:
-        selected_name, selected_image, initial_recipe_url = initial_recipe_data
-        print("Randomly Selected Recipe:")
-        print("Name:", selected_name)
-        print("Image URL:", selected_image)
-        print("Recipe URL:", initial_recipe_url)
         
-        # Ask if the recipe is suitable
-        suitability = input("Is this recipe suitable for you? (yes/no): ").strip().lower()
-        
-        if suitability == "yes":
-            # Set the flag to end the loop
-            recipe_found = True
-        else:
-            # Continue the loop to find a new random recipe
-            print("Fetching a new random recipe URL...")
+    # Define a regular expression pattern to match the desired text
+    pattern = r"/recette_(.*?)_"
 
-## STEP 3 : Fetch and display the list of ingredients for the selected recipe if the user is satisfied
+    # Use re.search to find the pattern in the URL
+    match = re.search(pattern, selected_url)
 
-if recipe_found:
-    # Fetch and display the list of ingredients for the selected recipe
-    print("Fetching ingredients...")
-    response_ingredients = requests.get(initial_recipe_url)
-    soup_ingredients = BeautifulSoup(response_ingredients.text, 'html.parser')
-    span_element_1 = soup_ingredients.find_all('span', class_='RCP__sc-8cqrvd-3')
-    span_element_1_as_string = str(span_element_1)
-    soup = BeautifulSoup(span_element_1_as_string, 'html.parser')
-    text_parts = [span.text for span in soup.find_all('span', class_=["RCP__sc-8cqrvd-3 itCXhd", "RCP__sc-8cqrvd-3 cDbUWZ"])]
+    if match:
+        result_recipe = match.group(1)  # Extract the captured text within the parentheses
+        print(result_recipe)
+    else:
+        print("Pattern not found in the URL.")
+    answer = input(f"Are you satisfied by this recipe? {result_recipe} (yes/no): ").lower()  # Convert the input to lowercase for case-insensitivity
+    
+    if answer == "yes":
+        print("Great! Glad to hear that.")
+        response_ingredients = requests.get(selected_url)
 
-    # Print the list of extracted text parts (ingredients)
-    print("Ingredients:")
-    for ingredient in text_parts:
-        print("- " + ingredient)
+        soup_ingredients = BeautifulSoup(response_ingredients.text, 'html.parser')
+        span_element_1 = soup_ingredients.find_all('span', class_='RCP__sc-8cqrvd-3')
+
+
+        span_element_1_as_string = str(span_element_1)
+
+
+        # Parse the HTML code
+        soup = BeautifulSoup(span_element_1_as_string, 'html.parser')
+
+        # Find all <span> elements with the specified classes and extract their text
+        text_parts = [span.text for span in soup.find_all('span', class_=["RCP__sc-8cqrvd-3 itCXhd", "RCP__sc-8cqrvd-3 cDbUWZ"])]
+
+        # Print the list of extracted text parts
+        print("Here is the list of ingredients to buy:")
+        for ingredient in text_parts:
+            print("- " + ingredient)
+        print("Good luck and Bon appétito")
+        break  # Exit the loop if the user answers "yes"
+    elif answer == "no":
+        print("I'm sorry to hear that. Let me ask again.")
+    else:
+        print("Invalid response. Please answer with 'yes' or 'no'.")
