@@ -2,7 +2,7 @@
 """
 Created on Thu Sep 21 12:43:30 2023
 
-@author: samuel
+@authors: samuel + jeanne
 """
 
 # Import necessary libraries
@@ -48,7 +48,11 @@ else:
 
 valid_main_categories = ['viande', 'poisson', 'fruits-de-mer', 'plat-unique', 'œufs', 'plat-vegetarien', 'pates-riz-semoule', 'plats-au-fromage']
 
-# Prompt the user for input and ensure it is a valid main category
+# Prompt the user to choose a preferred main category
+print("Available main categories:")
+for category in valid_main_categories:
+    print("- " + category)
+
 while True:
     user_input = input("Please enter your preferred main category: ").lower()
     
@@ -56,8 +60,7 @@ while True:
         # User input is valid, break the loop
         break
     else:
-        print("Invalid category. Please choose from the following options:")
-        print(valid_main_categories)
+        print("Invalid category. Please choose from the available options.")
 
 # Now, 'user_input' contains the user's preferred main category
 print("You selected:", user_input)
@@ -126,8 +129,10 @@ while True:
         text_parts = [span.text for span in soup.find_all('span', class_=["RCP__sc-8cqrvd-3 itCXhd", "RCP__sc-8cqrvd-3 cDbUWZ"])]
 
         # Print the list of extracted text parts
-        print(f"Here is the list of ingredients to buy:{text_parts}")
-        print("Good luck and Bon appétit")
+        print("Here is the list of ingredients to buy:")
+        for ingredient in text_parts:
+            print("- " + ingredient)
+        print("Good luck and Bon appétito")
         break  # Exit the loop if the user answers "yes"
     elif answer == "no":
         print("I'm sorry to hear that. Let me ask again.")
