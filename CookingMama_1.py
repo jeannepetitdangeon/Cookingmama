@@ -108,7 +108,8 @@ while True:
         print(result_recipe)
     else:
         print("Pattern not found in the URL.")
-    answer = input(f"Are you satisfied by this recipe? {result_recipe} (yes/no): ").lower()  # Convert the input to lowercase for case-insensitivity
+    answer = input(f"Are you satisfied by this recipe? {result_recipe} (yes/no): ").lower()  
+    # Convert the input to lowercase for case-insensitivity
     
     if answer == "yes":
         print("Great! Glad to hear that.")
